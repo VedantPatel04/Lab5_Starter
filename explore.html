@@ -32,6 +32,33 @@
       <button>Press to Talk</button>
     </section>
   </main>
+  <script>
+    const synth = window.speechSynthesis;
+    const textArea = document.getElementById('text-to-speak');
+    const voiceSelect = document.getElementById('voice-select');
+    const speakBtn = document.querySelector('#explore button');
+  
+    function loadVoices() {
+      const voices = synth.getVoices();
+      voiceSelect.innerHTML = '<option disabled selected>Select Voice:</option>';
+      voices.forEach((v, i) => {
+        voiceSelect.innerHTML += `<option value="${i}">${v.name} (${v.lang})</option>`;
+      });
+    }
+  
+    // Load voices (some browsers may load them asynchronously)
+    if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
+    loadVoices();
+  
+    speakBtn.addEventListener('click', () => {
+      const text = textArea.value.trim();
+      const voiceIndex = voiceSelect.value;
+      if (!text || voiceIndex === 'select') return alert('Enter text and select a voice.');
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.voice = synth.getVoices()[voiceIndex];
+      synth.speak(utterance);
+    });
+  </script>
 </body>
 
 </html>
